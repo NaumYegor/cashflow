@@ -1,5 +1,6 @@
 import string
 import constant
+import config
 
 available_symbols = string.ascii_letters + string.digits
 
@@ -40,3 +41,7 @@ def invalid_data_msg():
             " and " + str(constant.MAX_PASS_LENGTH) + "\n" +
             "Available symbols are: " + available_symbols
             )
+
+
+def confirmation_link():
+    return "https://" + config.IP + ":" + str(config.PORT)
