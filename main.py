@@ -37,7 +37,8 @@ def sign_up():
         smtp_obj = smtplib.SMTP(config.smtp_host, config.smtp_port)
         smtp_obj.starttls()
         smtp_obj.login(config.email, config.password)
-        confirm_message = config.CONFIRMATION_TEXT + functions.confirmation_link()
+        confirm_message = config.CONFIRMATION_TEXT + \
+                          functions.confirmation_link()
         smtp_obj.sendmail(config.email, user["email"], confirm_message)
     except smtplib.SMTPRecipientsRefused:
         return "Bad email, bro."
