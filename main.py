@@ -19,18 +19,16 @@ def sign_up():
     }
 
     if not user["login"] or not user["email"] or not user["password"]:
-        return "Not filled field."
+        return "Not filled fields."
 
     conn = sqlite3.connect("debt.db")
     cursor = conn.cursor()
 
     cursor.execute('SELECT * FROM users WHERE login=?', (user["login"], ))
-    answer = cursor.fetchone()
-    if answer is not None:
-        print (answer)
+    if cursor.fetchone() is not None:
         return "Try another login."
 
-    cursor.execute('SELECT * FROM users WHERE email=?', (user["email"],))
+    cursor.execute('SELECT * FROM users WHERE email=?', (user["email"], ))
     if cursor.fetchone() is not None:
         return "Try another email."
 
@@ -64,6 +62,33 @@ def confirm():
     conn.close()
 
     return "Activated."
+
+
+@app.route('/signin', methods=['POST'])
+def sign_in():
+
+    user = {
+        "login": request.values.get("login"),
+        "password": request.values.get("password")
+    }
+
+    if not user["login"] or not user["password"]:
+        return "Not filled fields."
+
+    conn = sqlite3.connect("debt.db")
+    cursor = conn.cursor()
+
+    cursor.execute('SELECT * FROM users WHERE login = ?', (user["login"], ))
+    expected_password = cursor.fetchone()[2]
+    if user["password"] != expected_password:
+        return "Wrong password."
+
+    new_token = secrets.token_hex(16)
+    cursor.execute("UPDATE users SET token = ? WHERE login = ?", (new_token, user["login"], ))
+    conn.commit()
+    conn.close()
+
+    return "Ok."
 
 
 if __name__ == '__main__':
