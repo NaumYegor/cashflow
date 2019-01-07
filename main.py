@@ -14,8 +14,8 @@ def sign_up():
         "login": request.values.get("login"),
         "email": request.values.get("email"),
         "password": request.values.get("password"),
+        "token": secrets.token_hex(16),
         "status": "inactive"
-        #"token": secrets.token_hex(16)
     }
 
     if not user["login"] or not user["email"] or not user["password"]:
@@ -25,7 +25,9 @@ def sign_up():
     cursor = conn.cursor()
 
     cursor.execute('SELECT * FROM users WHERE login=?', (user["login"], ))
-    if cursor.fetchone() is not None:
+    answer = cursor.fetchone()
+    if answer is not None:
+        print (answer)
         return "Try another login."
 
     cursor.execute('SELECT * FROM users WHERE email=?', (user["email"],))
@@ -40,11 +42,28 @@ def sign_up():
 
     user = functions.dict_to_tuple(user)
     print(user)
-    cursor.execute("INSERT INTO users VALUES (?, ?, ?, ?)", user)
+    cursor.execute("INSERT INTO users VALUES (?, ?, ?, ?, ?)", user)
     conn.commit()
     conn.close()
 
     return "Check an email."
+
+
+@app.route('/confirm', methods=['GET'])
+def confirm():
+    token = request.values.get('token')
+
+    if not token:
+        return "Bad request."
+
+    conn = sqlite3.connect('debt.db')
+    cursor = conn.cursor()
+
+    cursor.execute("UPDATE users SET status = 'active' WHERE token = ?", (token, ))
+    conn.commit()
+    conn.close()
+
+    return "Activated."
 
 
 if __name__ == '__main__':
