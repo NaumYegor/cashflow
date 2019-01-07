@@ -1,6 +1,7 @@
 import string
 import constant
 import config
+import smtplib
 
 available_symbols = string.ascii_letters + string.digits
 
@@ -45,3 +46,15 @@ def invalid_data_msg():
 
 def confirmation_link():
     return "https://" + config.IP + ":" + str(config.PORT)
+
+
+def send_email(recipient):
+    try:
+        smtp_obj = smtplib.SMTP(config.smtp_host, config.smtp_port)
+        smtp_obj.starttls()
+        smtp_obj.login(config.email, config.password)
+        confirm_message = config.CONFIRMATION_TEXT + confirmation_link()
+        smtp_obj.sendmail(config.email, recipient, confirm_message)
+        return True
+    except smtplib.SMTPRecipientsRefused:
+        return False

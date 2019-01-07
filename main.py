@@ -1,7 +1,6 @@
 from flask import Flask, request
 import sqlite3
 import functions
-import smtplib
 import config
 import secrets
 
@@ -33,15 +32,8 @@ def sign_up():
     if not functions.log_pass_valid(user["login"], user["password"]):
         return functions.invalid_data_msg()
 
-    try:
-        smtp_obj = smtplib.SMTP(config.smtp_host, config.smtp_port)
-        smtp_obj.starttls()
-        smtp_obj.login(config.email, config.password)
-        confirm_message = config.CONFIRMATION_TEXT + \
-                          functions.confirmation_link()
-        smtp_obj.sendmail(config.email, user["email"], confirm_message)
-    except smtplib.SMTPRecipientsRefused:
-        return "Bad email, bro."
+    if not functions.send_email(user["email"]):
+        return "Wrong email, bro."
 
     user = functions.dict_to_tuple(user)
     print(user)
@@ -49,7 +41,7 @@ def sign_up():
     conn.commit()
     conn.close()
 
-    return "ok"
+    return "Check an email."
 
 
 if __name__ == '__main__':
