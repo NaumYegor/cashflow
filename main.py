@@ -18,6 +18,9 @@ def sign_up():
         #"token": secrets.token_hex(16)
     }
 
+    if not user["login"] or not user["email"] or not user["password"]:
+        return "Not filled field."
+
     conn = sqlite3.connect("debt.db")
     cursor = conn.cursor()
 
