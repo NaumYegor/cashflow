@@ -88,7 +88,7 @@ def sign_in():
     conn.commit()
     conn.close()
 
-    return "Ok."
+    return new_token
 
 
 if __name__ == '__main__':
