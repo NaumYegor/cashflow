@@ -57,7 +57,18 @@ def confirm():
     conn = sqlite3.connect('debt.db')
     cursor = conn.cursor()
 
+    cursor.execute("SELECT * FROM users WHERE token = ?", (token, ))
+    user = cursor.fetchone()
+
+    if user is None:
+        return "Wrong token."
+
+    if user[4] == "active":
+        return "Activated already."
+
     cursor.execute("UPDATE users SET status = 'active' WHERE token = ?", (token, ))
+    cursor.execute("INSERT INTO spending VALUES (0, 0, 'Initial.', ?)", (user[0], ))
+
     conn.commit()
     conn.close()
 
