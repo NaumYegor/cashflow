@@ -35,7 +35,7 @@ def sign_up():
     if not functions.log_pass_valid(user["login"], user["password"]):
         return functions.invalid_data_msg()
 
-    if not functions.send_email(user["email"]):
+    if not functions.send_email(user["email"], user["token"]):
         return "Wrong email, bro."
 
     user = functions.dict_to_tuple(user)

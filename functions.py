@@ -44,16 +44,16 @@ def invalid_data_msg():
             )
 
 
-def confirmation_link():
-    return "https://" + config.IP + ":" + str(config.PORT)
+def confirmation_link(token):
+    return 'http://' + config.IP + ':' + str(config.PORT) + "/confirm?token=" + token
 
 
-def send_email(recipient):
+def send_email(recipient, token):
     try:
         smtp_obj = smtplib.SMTP(config.smtp_host, config.smtp_port)
         smtp_obj.starttls()
         smtp_obj.login(config.email, config.password)
-        confirm_message = config.CONFIRMATION_TEXT + confirmation_link()
+        confirm_message = config.CONFIRMATION_TEXT + confirmation_link(token)
         smtp_obj.sendmail(config.email, recipient, confirm_message)
         return True
     except smtplib.SMTPRecipientsRefused:
