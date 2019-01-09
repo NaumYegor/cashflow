@@ -96,6 +96,9 @@ def sign_in():
     if user_data is None:
         return "This login does not exist."
 
+    if user_data[4] == "inactive":
+        return "Activate your account."
+
     expected_password = user_data[2]
     if user["password"] != expected_password:
         return "Wrong password."
