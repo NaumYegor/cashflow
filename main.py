@@ -111,5 +111,47 @@ def sign_in():
     return new_token
 
 
+@app.route('/transaction', methods=['POST'])
+def activity():
+
+    token = request.values.get("token")
+    if token is None:
+        return "Bad request."
+
+    conn = sqlite3.connect("debt.db")
+    cursor = conn.cursor()
+
+    cursor.execute('SELECT * FROM users WHERE token = ?', (token, ))
+    user = cursor.fetchone()
+    if user is None:
+        return "Wrong token."
+
+    if user[4] == "inactive":
+        return "Activate your account."
+
+    try:
+        transaction = float(request.values.get("transaction"))
+    except ValueError:
+        return "Value Error. Transaction field should contain Float value."
+
+    new_balance = float(user[5]) + transaction
+    cursor.execute('UPDATE users SET balance = ? WHERE token = ?', (new_balance, token, ))
+
+    transaction = {
+        "balance": new_balance,
+        "transaction": transaction,
+        "title": request.values.get("title"),
+        "username": user[0]
+    }
+
+    transaction = functions.dict_to_tuple(transaction)
+    print(transaction)
+    cursor.execute("INSERT INTO spending VALUES (?, ?, ?, ?)", transaction)
+
+    conn.commit()
+    conn.close()
+    return "Transactions added."
+
+
 if __name__ == '__main__':
     app.run(host='0.0.0.0', debug=False, port=config.PORT)

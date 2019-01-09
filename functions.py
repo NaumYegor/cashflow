@@ -9,7 +9,7 @@ available_symbols = string.ascii_letters + string.digits
 def dict_to_tuple(dictionary):
     tup = tuple()
     for key in dictionary:
-        value = str(dictionary[str(key)])
+        value = dictionary[str(key)]
         tup += (value,)
     return tup
 
