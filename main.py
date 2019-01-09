@@ -3,6 +3,7 @@ import sqlite3
 import functions
 import config
 import secrets
+import bcrypt
 
 app = Flask(__name__)
 
@@ -39,6 +40,7 @@ def sign_up():
     if not functions.send_email(user["email"], user["token"]):
         return "Wrong email, bro."
 
+    user["password"] = bcrypt.hashpw(user["password"].encode('utf-8'), bcrypt.gensalt())
     user = functions.dict_to_tuple(user)
     print(user)
     cursor.execute("INSERT INTO users VALUES (?, ?, ?, ?, ?, ?)", user)
@@ -100,7 +102,7 @@ def sign_in():
         return "Activate your account."
 
     expected_password = user_data[2]
-    if user["password"] != expected_password:
+    if not bcrypt.checkpw(user["password"].encode('utf-8'), expected_password):
         return "Wrong password."
 
     new_token = secrets.token_hex(16)
