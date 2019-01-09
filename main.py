@@ -15,7 +15,8 @@ def sign_up():
         "email": request.values.get("email"),
         "password": request.values.get("password"),
         "token": secrets.token_hex(16),
-        "status": "inactive"
+        "status": "inactive",
+        "balance": 0
     }
 
     if not user["login"] or not user["email"] or not user["password"]:
@@ -40,7 +41,7 @@ def sign_up():
 
     user = functions.dict_to_tuple(user)
     print(user)
-    cursor.execute("INSERT INTO users VALUES (?, ?, ?, ?, ?)", user)
+    cursor.execute("INSERT INTO users VALUES (?, ?, ?, ?, ?, ?)", user)
     conn.commit()
     conn.close()
 
@@ -90,12 +91,17 @@ def sign_in():
     cursor = conn.cursor()
 
     cursor.execute('SELECT * FROM users WHERE login = ?', (user["login"], ))
-    expected_password = cursor.fetchone()[2]
+    user_data = cursor.fetchone()
+
+    if user_data is None:
+        return "This login does not exist."
+
+    expected_password = user_data[2]
     if user["password"] != expected_password:
         return "Wrong password."
 
     new_token = secrets.token_hex(16)
-    cursor.execute("UPDATE users SET token = ? WHERE login = ?", (new_token, user["login"], ))
+    cursor.execute("UPDATE users SET token = ? WHERE login = ?", (new_token, user_data[0], ))
     conn.commit()
     conn.close()
 
