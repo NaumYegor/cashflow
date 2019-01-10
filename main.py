@@ -157,5 +157,29 @@ def activity():
     return "Transactions added."
 
 
+@app.route('/get_transactions', methods=['GET'])
+def get_transactions():
+
+    token = request.values.get("token")
+
+    if token is None:
+        return "token is None..."
+
+    conn = sqlite3.connect("debt.db")
+    cursor = conn.cursor()
+
+    cursor.execute('SELECT * FROM users WHERE token = ?', (token, ))
+    user = cursor.fetchone()
+
+    if user is None:
+        return "user is None..."
+
+    user_login = user[0]
+    cursor.execute('SELECT * FROM spending WHERE username = ?', (user_login, ))
+    transactions = functions.sql_transaction_array_to_json(cursor.fetchall())
+
+    return transactions
+
+
 if __name__ == '__main__':
     app.run(host='0.0.0.0', debug=False, port=config.PORT)

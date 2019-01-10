@@ -3,6 +3,7 @@ import constant
 import config
 import smtplib
 import datetime
+import json
 
 available_symbols = string.ascii_letters + string.digits
 
@@ -64,3 +65,18 @@ def send_email(recipient, token):
 def current_date():
     now = datetime.datetime.now()
     return "{}.{}.{} {}:{}:{}".format(now.day, now.month, now.year, now.hour, now.minute, now.second)
+
+
+def sql_transaction_array_to_json(arrays):
+    for i in range(len(arrays)):
+        tup = arrays[i]
+        print(tup)
+        new_dict = {
+            "balance": tup[0],
+            "transaction": tup[1],
+            "title": tup[2],
+            "username": tup[3],
+            "date": tup[4]
+        }
+        arrays[i] = new_dict
+    return json.dumps(arrays)
