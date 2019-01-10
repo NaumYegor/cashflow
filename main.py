@@ -4,6 +4,7 @@ import functions
 import config
 import secrets
 import bcrypt
+import datetime
 
 app = Flask(__name__)
 
@@ -70,7 +71,7 @@ def confirm():
         return "Activated already."
 
     cursor.execute("UPDATE users SET status = 'active' WHERE token = ?", (token, ))
-    cursor.execute("INSERT INTO spending VALUES (0, 0, 'Initial.', ?)", (user[0], ))
+    cursor.execute("INSERT INTO spending VALUES (0, 0, 'Initial.', ?, ?)", (user[0], functions.current_date(), ))
 
     conn.commit()
     conn.close()
@@ -143,12 +144,13 @@ def activity():
         "balance": new_balance,
         "transaction": transaction,
         "title": request.values.get("title"),
-        "username": user[0]
+        "username": user[0],
+        "date": functions.current_date()
     }
 
     transaction = functions.dict_to_tuple(transaction)
     print(transaction)
-    cursor.execute("INSERT INTO spending VALUES (?, ?, ?, ?)", transaction)
+    cursor.execute("INSERT INTO spending VALUES (?, ?, ?, ?, ?)", transaction)
 
     conn.commit()
     conn.close()

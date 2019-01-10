@@ -2,6 +2,7 @@ import string
 import constant
 import config
 import smtplib
+import datetime
 
 available_symbols = string.ascii_letters + string.digits
 
@@ -58,3 +59,8 @@ def send_email(recipient, token):
         return True
     except smtplib.SMTPRecipientsRefused:
         return False
+
+
+def current_date():
+    now = datetime.datetime.now()
+    return "{}.{}.{} {}:{}:{}".format(now.day, now.month, now.year, now.hour, now.minute, now.second)
