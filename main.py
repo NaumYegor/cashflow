@@ -41,7 +41,8 @@ def sign_up():
     if not functions.send_email(user["email"], user["token"]):
         return "Wrong email, bro."
 
-    user["password"] = bcrypt.hashpw(user["password"].encode('utf-8'), bcrypt.gensalt())
+    user["password"] = bcrypt.hashpw(user["password"].encode('utf-8'),
+                                     bcrypt.gensalt())
     user = functions.dict_to_tuple(user)
     print(user)
     cursor.execute("INSERT INTO users VALUES (?, ?, ?, ?, ?, ?)", user)
@@ -70,8 +71,10 @@ def confirm():
     if user[4] == "active":
         return "Activated already."
 
-    cursor.execute("UPDATE users SET status = 'active' WHERE token = ?", (token, ))
-    cursor.execute("INSERT INTO spending VALUES (0, 0, 'Initial.', ?, ?)", (user[0], functions.current_date(), ))
+    cursor.execute("UPDATE users SET status = 'active' WHERE token = ?",
+                   (token, ))
+    cursor.execute("INSERT INTO spending VALUES (0, 0, 'Initial.', ?, ?)",
+                   (user[0], functions.current_date(), ))
 
     conn.commit()
     conn.close()
@@ -107,7 +110,8 @@ def sign_in():
         return "Wrong password."
 
     new_token = secrets.token_hex(16)
-    cursor.execute("UPDATE users SET token = ? WHERE login = ?", (new_token, user_data[0], ))
+    cursor.execute("UPDATE users SET token = ? WHERE login = ?",
+                   (new_token, user_data[0], ))
     conn.commit()
     conn.close()
 
@@ -138,7 +142,8 @@ def activity():
         return "Value Error. Transaction field should contain Float value."
 
     new_balance = float(user[5]) + transaction
-    cursor.execute('UPDATE users SET balance = ? WHERE token = ?', (new_balance, token, ))
+    cursor.execute('UPDATE users SET balance = ? WHERE token = ?',
+                   (new_balance, token, ))
 
     transaction = {
         "balance": new_balance,

@@ -47,7 +47,8 @@ def invalid_data_msg():
 
 
 def confirmation_link(token):
-    return 'http://' + config.IP + ':' + str(config.PORT) + "/confirm?token=" + token
+    return 'http://' + config.IP + ':' + str(config.PORT) + "/confirm?token="\
+           + token
 
 
 def send_email(recipient, token):
@@ -64,7 +65,8 @@ def send_email(recipient, token):
 
 def current_date():
     now = datetime.datetime.now()
-    return "{}.{}.{} {}:{}:{}".format(now.day, now.month, now.year, now.hour, now.minute, now.second)
+    return "{}.{}.{} {}:{}:{}".format(now.day, now.month, now.year,
+                                      now.hour, now.minute, now.second)
 
 
 def sql_transaction_array_to_json(arrays):
