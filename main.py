@@ -161,7 +161,7 @@ def activity():
 
     conn.commit()
     conn.close()
-    return "Transactions added."
+    return "Transaction added."
 
 
 @app.route('/list', methods=['GET'])

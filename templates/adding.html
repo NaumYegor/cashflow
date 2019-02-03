@@ -45,6 +45,11 @@
     req.open('POST', '/transaction', false)
     req.send(formdata);
     alert(req.responseText);
+    if (req.responseText=="Transaction added.") {
+      window.location.replace("/list?token="+storage.getItem('token'));
+    } else {
+      document.getElementsByClassName('amount')[0].value = 0;
+    }
     return 0;
   }
   function logOut(){
