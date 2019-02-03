@@ -1,0 +1,37 @@
+.wrapper {
+    display: grid;
+    grid-template-rows: 2fr 1fr 0.5fr 0.5fr 0.7fr 0.7fr;
+    grid-template-columns: repeat(8, 1fr);
+    grid-row-gap: 10px;
+    grid-template-areas:
+        ". . . . . . . ."
+        ". . . t t . . ."
+        ". . . l l . . ."
+        ". . . p p . . ."
+        ". . . s s . . ."
+        ". . . r r . . .";
+}
+
+.header {
+    grid-area: t;
+}
+
+.login {
+    grid-area: l;
+}
+
+.password {
+    grid-area: p;
+}
+
+.sign {
+    grid-area: s;
+    color: white;
+    background-color: #00b36b;
+}
+
+.refer {
+    grid-area: r;
+    color: white;
+    background-color: #007acc;
+}

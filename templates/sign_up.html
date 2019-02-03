@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/html" xmlns="http://www.w3.org/1999/html">
+<head>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
+    <link rel="stylesheet" href="{{ url_for('static', filename='sign_up.css') }}">
+    <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
+    <meta charset="UTF-8">
+    <title>Debts|Sign up</title>
+</head>
+<body>
+<form class="wrapper">
+    <h1 class="header"><center>Sign up!</center></h1>
+    <input class="login" type="text" placeholder="Enter your login" autofocus>
+    <input class="email" type="email" placeholder="Enter your email">
+    <input class="password" type="password" placeholder="Enter your password">
+    <input class="confirm" type="password" placeholder="Confirm password">
+    <input class="sign" type="button" value="Sign up" onclick="sign_up();">
+    <input class="refer" type="button" value="Sign in" onclick="window.location = '/login'">
+</form>
+    <script>
+    function sign_up (){
+      if (document.getElementsByClassName("password")[0].value != document.getElementsByClassName("confirm")[0].value) {
+        alert("Passwords do not match");
+        return;
+      }
+      let formdata = new FormData();
+      formdata.append('login', document.getElementsByClassName('login')[0].value);
+      formdata.append('email', document.getElementsByClassName('email')[0].value);
+      formdata.append('password', document.getElementsByClassName('password')[0].value);
+      let req = new XMLHttpRequest();
+      req.open('POST', '/signup', false)
+      req.send(formdata);
+      setTimeout(() => {alert(req.responseText)}, 5000);
+      if (req.responseText=="Check an email."){
+        window.location.replace("/login");
+      } else {
+        alert(req.responseText);
+      }
+      return 0;
+    }
+    </script>
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.6/umd/popper.min.js" integrity="sha384-wHAiFfRlMFy6i5SRaxvfOCifBUQy1xHdJ/yoi7FRNXMRBu5WHdZYu1hA6ZOblgut" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.min.js" integrity="sha384-B0UglyR+jN6CkvvICOB2joaf5I4l3gm9GU6Hc1og6Ls7i6U/mkkaduKaBhlAXv9k" crossorigin="anonymous"></script>
+</body>
+</html>

@@ -1,0 +1,25 @@
+.wrapper {
+    display: grid;
+    grid-gap: 10px;
+    grid-template-rows: 0.001fr 1fr 1fr 1fr;
+    grid-template-columns: 0.001fr 0.5fr 1fr 1fr;
+    grid-template-areas:
+        ". . . ."
+        ". t . ."
+        ". a . ."
+        ". b . .";
+}
+
+.title {
+  grid-area: t;
+}
+
+.amount {
+  grid-area: a;
+}
+
+.add {
+  grid-area: b;
+  background-color: rgba(53, 169, 223, 0.7);
+  color: #51587f;
+}

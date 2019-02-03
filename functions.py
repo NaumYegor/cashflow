@@ -72,7 +72,6 @@ def current_date():
 def sql_transaction_array_to_json(arrays):
     for i in range(len(arrays)):
         tup = arrays[i]
-        print(tup)
         new_dict = {
             "balance": tup[0],
             "transaction": tup[1],

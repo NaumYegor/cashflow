@@ -1,10 +1,9 @@
-from flask import Flask, request
+from flask import Flask, request, render_template
 import sqlite3
 import functions
 import config
 import secrets
 import bcrypt
-import datetime
 
 app = Flask(__name__)
 
@@ -38,8 +37,11 @@ def sign_up():
     if not functions.log_pass_valid(user["login"], user["password"]):
         return functions.invalid_data_msg()
 
-    if not functions.send_email(user["email"], user["token"]):
-        return "Wrong email, bro."
+    try:
+        if not functions.send_email(user["email"], user["token"]):
+            return "Wrong email, bro."
+    except UnicodeEncodeError:
+        return "UnicodeEncodeError"
 
     user["password"] = bcrypt.hashpw(user["password"].encode('utf-8'),
                                      bcrypt.gensalt())
@@ -162,7 +164,7 @@ def activity():
     return "Transactions added."
 
 
-@app.route('/get_transactions', methods=['GET'])
+@app.route('/list', methods=['GET'])
 def get_transactions():
 
     token = request.values.get("token")
@@ -181,9 +183,24 @@ def get_transactions():
 
     user_login = user[0]
     cursor.execute('SELECT * FROM spending WHERE username = ?', (user_login, ))
-    transactions = functions.sql_transaction_array_to_json(cursor.fetchall())
+    transactions = cursor.fetchall()
 
-    return transactions
+    return render_template("list.html", transactions=transactions[::-1])
+
+
+@app.route('/register', methods=['GET'])
+def sign_up_template():
+    return render_template("sign_up.html")
+
+
+@app.route('/login', methods=['GET'])
+def sign_in_template():
+    return render_template("sign_in.html")
+
+
+@app.route('/add', methods=['GET'])
+def add_page():
+    return render_template("adding.html")
 
 
 if __name__ == '__main__':
