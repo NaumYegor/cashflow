@@ -2,10 +2,10 @@
 <html lang="en" xmlns="http://www.w3.org/1999/html" xmlns="http://www.w3.org/1999/html">
 <head>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
-    <link rel="stylesheet" href="{{ url_for('static', filename='add.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='delete.css') }}">
     <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
     <meta charset="UTF-8">
-    <title>Debts|Add</title>
+    <title>Debts|Delete</title>
 </head>
 <body>
   <nav class="navbar navbar-light" style="background-color: #e3f2fd;">
@@ -15,11 +15,11 @@
     </button>
     <div class="collapse navbar-collapse" id="navbarNav">
       <ul class="navbar-nav">
-        <li class="nav-item active">
-          <a class="nav-link">Add</a>
-        </li>
         <li class="nav-item">
-          <a class="nav-link" href="/delete">Delete</a>
+          <a class="nav-link" href="/add">Add</a>
+        </li>
+        <li class="nav-item active">
+          <a class="nav-link">Delete</a>
         </li>
         <li class="nav-item">
           <a class="nav-link" onclick="toTransactions();">Transactions</a>
@@ -31,26 +31,24 @@
     </div>
   </nav>
   <form class="wrapper">
-      <input class="title" type="text" placeholder="e.g. Bought a car..." autofocus>
-      <input class="amount" type="text" placeholder="e.g. 1000">
-      <input class="add" id="button" type="button" value="Add" onclick="add();">
+      <input class="ID" type="text" placeholder="ID..." autofocus>
+      <input class="delete" id="button" type="button" value="Delete" onclick="delete_id();">
   </form>
 <script>
-  function add (){
+  function delete_id(){
     storage = localStorage;
     let formdata = new FormData();
 
     formdata.append('token', storage.getItem('token'));
-    formdata.append('title', document.getElementsByClassName('title')[0].value);
-    formdata.append('transaction', document.getElementsByClassName('amount')[0].value);
+    formdata.append('id', document.getElementsByClassName('ID')[0].value);
 
     let req = new XMLHttpRequest();
-    req.open('POST', '/transaction', false)
+    req.open('POST', '/delete', false)
     req.send(formdata);
-    if (req.responseText=="Transaction added.") {
+    if (req.responseText=="Deleted.") {
       window.location.replace("/list?token="+storage.getItem('token'));
     } else {
-      document.getElementsByClassName('amount')[0].value = 0;
+      document.getElementsByClassName('ID')[0].value = '';
       alert(req.responseText);
     }
     return 0;

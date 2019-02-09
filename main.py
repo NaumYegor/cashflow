@@ -155,11 +155,12 @@ def activity():
         "transaction": transaction,
         "title": request.values.get("title"),
         "username": user[0],
-        "date": functions.current_date()
+        "date": functions.current_date(),
+        "id_code": urandom(16).hex()
     }
 
     transaction = functions.transaction_convert(transaction)
-    cursor.execute("INSERT INTO spending VALUES (?, ?, ?, ?, ?)", transaction)
+    cursor.execute("INSERT INTO spending VALUES (?, ?, ?, ?, ?, ?)", transaction)
 
     conn.commit()
     conn.close()
@@ -190,6 +191,41 @@ def get_transactions():
     return render_template("list.html", transactions=transactions[::-1])
 
 
+@app.route('/delete', methods=['POST'])
+def delete():
+
+    token = request.values.get("token")
+    id_code = request.values.get("id")
+
+    if token is None:
+        return "token is None..."
+
+    conn = sqlite3.connect(constant.DB_NAME)
+    cursor = conn.cursor()
+
+    cursor.execute('SELECT * FROM users WHERE token = ?', (token,))
+    user = cursor.fetchone()
+
+    if user is None:
+        return "user is None..."
+
+    cursor.execute('SELECT * FROM spending WHERE username = ? and ID = ?',
+                   (user[0], id_code, ))
+    transaction = cursor.fetchone()
+    if transaction is None:
+        return "Wrong code."
+
+    cursor.execute("UPDATE users SET balance = ? WHERE token = ?",
+                   (user[5]-transaction[1], token, ))
+    cursor.execute('DELETE FROM spending WHERE ID = ? AND username = ?',
+                   (id_code, user[0], ))
+
+    conn.commit()
+    conn.close()
+
+    return "Deleted."
+
+
 @app.route('/register', methods=['GET'])
 def sign_up_template():
     return render_template("sign_up.html")
@@ -203,6 +239,11 @@ def sign_in_template():
 @app.route('/add', methods=['GET'])
 def add_page():
     return render_template("adding.html")
+
+
+@app.route('/delete', methods=['GET'])
+def delete_page():
+    return render_template("deleting.html")
 
 
 if __name__ == '__main__':

@@ -84,5 +84,6 @@ def sql_transaction_array_to_json(arrays):
 
 
 def transaction_convert(transaction):
-    tup = (transaction["balance"], transaction["transaction"], transaction["title"], transaction["username"], transaction["date"])
+    tup = (transaction["balance"], transaction["transaction"], transaction["title"],
+           transaction["username"], transaction["date"], transaction["id_code"])
     return tup
