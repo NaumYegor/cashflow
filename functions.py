@@ -81,3 +81,8 @@ def sql_transaction_array_to_json(arrays):
         }
         arrays[i] = new_dict
     return json.dumps(arrays)
+
+
+def transaction_convert(transaction):
+    tup = (transaction["balance"], transaction["transaction"], transaction["title"], transaction["username"], transaction["date"])
+    return tup

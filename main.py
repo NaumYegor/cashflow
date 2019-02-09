@@ -1,9 +1,12 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
 from flask import Flask, request, render_template
 import sqlite3
 import functions
 import config
-import secrets
+from os import urandom
 import bcrypt
+import constant
 
 app = Flask(__name__)
 
@@ -15,7 +18,7 @@ def sign_up():
         "login": request.values.get("login"),
         "email": request.values.get("email"),
         "password": request.values.get("password"),
-        "token": secrets.token_hex(16),
+        "token": urandom(16).hex(),
         "status": "inactive",
         "balance": 0
     }
@@ -23,7 +26,7 @@ def sign_up():
     if not user["login"] or not user["email"] or not user["password"]:
         return "Not filled fields."
 
-    conn = sqlite3.connect("debt.db")
+    conn = sqlite3.connect(constant.DB_NAME)
     cursor = conn.cursor()
 
     cursor.execute('SELECT * FROM users WHERE login=?', (user["login"], ))
@@ -61,7 +64,7 @@ def confirm():
     if not token:
         return "Bad request."
 
-    conn = sqlite3.connect('debt.db')
+    conn = sqlite3.connect(constant.DB_NAME)
     cursor = conn.cursor()
 
     cursor.execute("SELECT * FROM users WHERE token = ?", (token, ))
@@ -95,7 +98,7 @@ def sign_in():
     if not user["login"] or not user["password"]:
         return "Not filled fields."
 
-    conn = sqlite3.connect("debt.db")
+    conn = sqlite3.connect(constant.DB_NAME)
     cursor = conn.cursor()
 
     cursor.execute('SELECT * FROM users WHERE login = ?', (user["login"], ))
@@ -111,7 +114,7 @@ def sign_in():
     if not bcrypt.checkpw(user["password"].encode('utf-8'), expected_password):
         return "Wrong password."
 
-    new_token = secrets.token_hex(16)
+    new_token = urandom(16).hex()
     cursor.execute("UPDATE users SET token = ? WHERE login = ?",
                    (new_token, user_data[0], ))
     conn.commit()
@@ -127,7 +130,7 @@ def activity():
     if token is None:
         return "Bad request."
 
-    conn = sqlite3.connect("debt.db")
+    conn = sqlite3.connect(constant.DB_NAME)
     cursor = conn.cursor()
 
     cursor.execute('SELECT * FROM users WHERE token = ?', (token, ))
@@ -155,8 +158,7 @@ def activity():
         "date": functions.current_date()
     }
 
-    transaction = functions.dict_to_tuple(transaction)
-    print(transaction)
+    transaction = functions.transaction_convert(transaction)
     cursor.execute("INSERT INTO spending VALUES (?, ?, ?, ?, ?)", transaction)
 
     conn.commit()
@@ -172,7 +174,7 @@ def get_transactions():
     if token is None:
         return "token is None..."
 
-    conn = sqlite3.connect("debt.db")
+    conn = sqlite3.connect(constant.DB_NAME)
     cursor = conn.cursor()
 
     cursor.execute('SELECT * FROM users WHERE token = ?', (token, ))
