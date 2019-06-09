@@ -35,38 +35,9 @@
       <input class="amount" type="text" placeholder="e.g. 1000">
       <input class="add" id="button" type="button" value="Add" onclick="add();">
   </form>
-<script>
-  function add (){
-    storage = localStorage;
-    let formdata = new FormData();
-
-    formdata.append('token', storage.getItem('token'));
-    formdata.append('title', document.getElementsByClassName('title')[0].value);
-    formdata.append('transaction', document.getElementsByClassName('amount')[0].value);
-
-    let req = new XMLHttpRequest();
-    req.open('POST', '/transaction', false)
-    req.send(formdata);
-    if (req.responseText=="Transaction added.") {
-      window.location.replace("/list?token="+storage.getItem('token'));
-    } else {
-      document.getElementsByClassName('amount')[0].value = 0;
-      alert(req.responseText);
-    }
-    return 0;
-  }
-  function logOut(){
-    storage = localStorage;
-    storage.setItem('token', null);
-    window.location.replace("/login");
-    return 0;
-  }
-
-  function toTransactions() {
-    storage = localStorage;
-    window.location.replace("/list?token="+storage.getItem("token"));
-  }
-</script>
+<script type="text/javascript" src="{{ url_for('static', filename='add.js') }}"> </script>
+<script type="text/javascript" src="{{ url_for('static', filename='common.js') }}"> </script>
+<script type="text/javascript" src="{{ url_for('static', filename='log_out.js') }}"> </script>
 <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.6/umd/popper.min.js" integrity="sha384-wHAiFfRlMFy6i5SRaxvfOCifBUQy1xHdJ/yoi7FRNXMRBu5WHdZYu1hA6ZOblgut" crossorigin="anonymous"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.min.js" integrity="sha384-B0UglyR+jN6CkvvICOB2joaf5I4l3gm9GU6Hc1og6Ls7i6U/mkkaduKaBhlAXv9k" crossorigin="anonymous"></script>
